@@ -1,12 +1,16 @@
 [Rule]
 
+# 全部走 jsDelivr：raw.githubusercontent.com 在国内不可达，规则集拉不下来。
+# 代价是 @main 分支引用缓存约 12h，push 后不会立刻生效；要立刻刷新，
+# 把 URL 的 cdn. 换成 purge. 请求一次即可。
+
 # ── 自维护：AI（最高优先级，必须在任何 IP 规则之前）────────────
-RULE-SET,https://raw.githubusercontent.com/evo-lee/co-surge-rules-set/main/rules/AI-Direct.list,🌐 直连
-RULE-SET,https://raw.githubusercontent.com/evo-lee/co-surge-rules-set/main/rules/AI.list,🤖 AI
+RULE-SET,https://cdn.jsdelivr.net/gh/evo-lee/co-surge-rules-set@main/rules/AI-Direct.list,🌐 直连
+RULE-SET,https://cdn.jsdelivr.net/gh/evo-lee/co-surge-rules-set@main/rules/AI.list,🤖 AI
 
 # ── 自维护：个人补丁 ──────────────────────────────────────
-RULE-SET,https://raw.githubusercontent.com/evo-lee/co-surge-rules-set/main/rules/Custom-Direct.list,🌐 直连
-RULE-SET,https://raw.githubusercontent.com/evo-lee/co-surge-rules-set/main/rules/Custom-Proxy.list,🚀 代理
+RULE-SET,https://cdn.jsdelivr.net/gh/evo-lee/co-surge-rules-set@main/rules/Custom-Direct.list,🌐 直连
+RULE-SET,https://cdn.jsdelivr.net/gh/evo-lee/co-surge-rules-set@main/rules/Custom-Proxy.list,🚀 代理
 
 # ── 上游：基础分流 ────────────────────────────────────────
 RULE-SET,https://cdn.jsdelivr.net/gh/Loyalsoldier/surge-rules@release/ruleset/private.txt,🌐 直连

@@ -77,9 +77,21 @@
 
 将来若需要，`rules/` 改名 `source/` 加一个 workflow 即可。
 
-### 不用 jsDelivr
+### 用 jsDelivr（2026-09-23 推翻原决定）
 
-Rabbit-Spec 和 Sukka 都直接用 `raw.githubusercontent.com`。jsDelivr 多一层缓存，改了规则要等失效，对自用反而添乱。
+原结论是"不用 jsDelivr"：Rabbit-Spec 和 Sukka 都直接用 `raw.githubusercontent.com`，多一层缓存改了规则要等失效。
+
+实际不成立——`raw.githubusercontent.com` 在国内不可达，规则集根本拉不下来，更新无从谈起。缓存是可以忍的代价，不可达不是。
+
+因此全部 `RULE-SET` 与远程 `#!include` 统一走 `https://cdn.jsdelivr.net/gh/evo-lee/co-surge-rules-set@main/...`。
+
+代价与对策：
+
+- `@main` 这类分支引用 jsDelivr 缓存约 12 小时，push 之后不会立刻生效。
+- 要立刻生效：把 URL 里的 `cdn.` 换成 `purge.` 请求一次即可刷新该文件
+  （`https://purge.jsdelivr.net/gh/evo-lee/co-surge-rules-set@main/rules/AI.list`）。
+- 需要绝对确定性时可以把 `@main` 换成 `@<commit-sha>`，jsDelivr 对 commit 引用永久缓存，
+  但每次改规则都要改 URL，自用不划算。
 
 ### 只做 Surge
 
