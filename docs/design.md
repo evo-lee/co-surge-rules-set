@@ -103,3 +103,43 @@ Rabbit-Spec 和 Sukka 都直接用 `raw.githubusercontent.com`。jsDelivr 多一
 
 - `nodes.dconf` 的生成方式尚未定案。属于本地工具，不在本仓库范围内。
 - 纯 dconf（不带 `#!MANAGED-CONFIG`）被远程 include 时的刷新语义未验证。
+
+---
+
+## 上游数据整理（2026-09-23）
+
+策略组的正则依赖节点名，所以先把 Sub-Store 侧的数据整理干净。
+
+**发现的问题**：`all-in-one` 产出 176 行却只有 64 个唯一节点。
+
+```
+m-nhy2   57   VPS 上 sub 服务的端点：2 个自建 + 55 个机场节点转发
+m-ntro   57   订阅 URL 与 m-nhy2 完全相同，纯重复
+vvcloud  58   机场直连（含 3 条流量/到期信息条目）
+其余 4 条  各 1   自建节点
+```
+
+更值得注意的是 **`sub` 的转发在静默丢节点**：`vvcloud` 直连有、经 `sub` 转发后消失的恰好 3 个，都是带 `port-hopping-interval` 的 Hysteria2。`sub` 的转换器不认这个参数。这是 parser 覆盖长尾的实证——而丢的正好是家宽港区节点，属于 AI 组最想要的那类。
+
+**处理**：
+
+1. 删除 `m-ntro`（纯重复）
+2. 给 `m-nhy2` 加 `Regex Filter`（`keep: ^(h2n|macn)`），只留 2 个自建节点，机场节点交还给 `vvcloud` 直连
+3. 给 5 条含自建节点的订阅加 `Regex Rename Operator`（`^` → `🏠 `），统一前缀
+
+**结果**：176 行 → 64 行，唯一 64，零重复；产出体积 31.6 KB → 11.1 KB。
+
+**副作用（已知并接受）**：`vultr-all` 和 `rack-vultr` 两个组合订阅不再包含转发来的机场节点，从 59/61 个降为 4/6 个纯自建节点。按其命名本意这更准确，但与改动前的行为不同。
+
+**对策略组的影响**：`🏠 自建` 的正则从 `(^racked?[- ])|(^mac)|(^h2n$)` 收紧为 `^🏠`。旧正则的 `^mac` 会误伤未来任何「澳门 / Macau」节点。
+
+### 算子 schema 备忘
+
+Sub-Store 的调用方式是 `PROXY_PROCESSORS[type](item.args)`，args 直接作为第一个参数：
+
+```jsonc
+{ "type": "Regex Filter",           "args": { "regex": ["^(h2n|macn)"], "keep": true } }
+{ "type": "Regex Rename Operator",  "args": [{ "expr": "^", "now": "🏠 " }] }
+```
+
+注意 `Regex Rename Operator` 的 args 是**数组**而非对象。API 为 `PATCH /api/sub/:name`，做浅合并（`{...oldSub, ...body}`），因此只发 `process` 字段即可。删除订阅时 Sub-Store 会自动清理组合订阅里的引用。

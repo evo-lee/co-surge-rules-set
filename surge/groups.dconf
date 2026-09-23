@@ -14,7 +14,8 @@
 # ══════════════════════════════════════════════════════════════
 
 # 自建节点：可控、无流量限制、IP 稳定
-🏠 自建 = select, include-other-group=🛫 全部节点, hidden=1, policy-regex-filter=(🏠)|(自建)|(^racked?[- ])|(^mac)|(^h2n$)
+# 前缀由 Sub-Store 的 Regex Rename Operator 统一加上，正则因此可以收紧到 ^🏠
+🏠 自建 = select, include-other-group=🛫 全部节点, hidden=1, policy-regex-filter=^🏠
 
 # AI 优选：家宽 / 住宅 / 双 ISP —— 机房 IP 最容易触发风控
 🧬 AI优选 = select, include-other-group=🛫 全部节点, hidden=1, policy-regex-filter=(家宽)|(住宅)|(双ISP)|(适合AI)|(Claude)
