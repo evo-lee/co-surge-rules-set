@@ -1,0 +1,27 @@
+[General]
+loglevel = notify
+
+# ── DNS 加密与防泄漏 ──────────────────────────────────────
+# DoH over HTTP/3，国内解析器保证速度；Surge < 5.8 请把 h3:// 改为 https://
+encrypted-dns-server = h3://223.5.5.5/dns-query, https://doh.pub/dns-query
+# 明文兜底。不放 1.1.1.1：UDP/53 出境慢且易被污染
+dns-server = 223.5.5.5, 119.29.29.29
+# 劫持硬编码明文 DNS 的应用（如写死 8.8.8.8:53），堵住最后一条泄漏路径
+hijack-dns = %DNS-SERVERS%:53
+# CN-only 库，比内置 MaxMind 更小更准
+geoip-maxmind-url = https://cdn.jsdelivr.net/gh/Hackl0us/GeoIP2-CN@release/Country.mmdb
+# 连通性检测与局域网域名必须拿真实 IP，否则 force-remote-dns 会破坏门户认证
+always-real-ip = *.lan, *.local, *.localhost, *.msftncsi.com, injections.adguard.org
+
+# ── 网络行为 ─────────────────────────────────────────────
+exclude-simple-hostnames = true
+skip-proxy = 127.0.0.1, 192.168.0.0/16, 10.0.0.0/8, 172.16.0.0/12, localhost, *.lan, *.local
+read-etc-hosts = true
+# 关闭 IPv6：避免 v6 泄漏，以及 v4/v6 出口 IP 不一致触发 AI 风控
+ipv6 = false
+udp-policy-not-supported-behaviour = REJECT
+
+# ── 测速 ─────────────────────────────────────────────────
+test-timeout = 5
+internet-test-url = http://cp.cloudflare.com/generate_204
+proxy-test-url = http://cp.cloudflare.com/generate_204

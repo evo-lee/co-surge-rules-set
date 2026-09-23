@@ -1,0 +1,3 @@
+# 个人补丁：强制直连
+# 被上游误判为需要代理、但实际直连更好的域名放这里。
+DOMAIN-SUFFIX,placeholder.invalid

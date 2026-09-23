@@ -1,0 +1,3 @@
+# 个人补丁：强制走 🚀 代理
+# 上游规则集没覆盖、或判断错误的域名放这里。
+DOMAIN-SUFFIX,placeholder.invalid

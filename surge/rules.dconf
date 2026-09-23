@@ -1,0 +1,25 @@
+[Rule]
+
+# ── 自维护：AI（最高优先级，必须在任何 IP 规则之前）────────────
+RULE-SET,https://raw.githubusercontent.com/evo-lee/co-surge-rules-set/main/rules/AI-Direct.list,🌐 直连
+RULE-SET,https://raw.githubusercontent.com/evo-lee/co-surge-rules-set/main/rules/AI.list,🤖 AI
+
+# ── 自维护：个人补丁 ──────────────────────────────────────
+RULE-SET,https://raw.githubusercontent.com/evo-lee/co-surge-rules-set/main/rules/Custom-Direct.list,🌐 直连
+RULE-SET,https://raw.githubusercontent.com/evo-lee/co-surge-rules-set/main/rules/Custom-Proxy.list,🚀 代理
+
+# ── 上游：基础分流 ────────────────────────────────────────
+RULE-SET,https://cdn.jsdelivr.net/gh/Loyalsoldier/surge-rules@release/ruleset/private.txt,🌐 直连
+RULE-SET,https://cdn.jsdelivr.net/gh/Loyalsoldier/surge-rules@release/ruleset/reject.txt,🛑 拦截
+RULE-SET,SYSTEM,🌐 直连
+RULE-SET,https://cdn.jsdelivr.net/gh/Loyalsoldier/surge-rules@release/ruleset/icloud.txt,🍎 苹果
+RULE-SET,https://cdn.jsdelivr.net/gh/Loyalsoldier/surge-rules@release/ruleset/apple.txt,🍎 苹果
+RULE-SET,https://cdn.jsdelivr.net/gh/Loyalsoldier/surge-rules@release/ruleset/proxy.txt,🚀 代理,force-remote-dns
+RULE-SET,https://cdn.jsdelivr.net/gh/Loyalsoldier/surge-rules@release/ruleset/direct.txt,🌐 直连
+RULE-SET,https://cdn.jsdelivr.net/gh/Loyalsoldier/surge-rules@release/ruleset/telegramcidr.txt,📲 电报,no-resolve
+RULE-SET,https://cdn.jsdelivr.net/gh/Loyalsoldier/surge-rules@release/ruleset/cncidr.txt,🌐 直连,no-resolve
+RULE-SET,LAN,🌐 直连
+
+# ── 兜底 ────────────────────────────────────────────────
+GEOIP,CN,🌐 直连
+FINAL,🚀 代理,dns-failed

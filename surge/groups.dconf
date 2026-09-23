@@ -1,0 +1,42 @@
+[Proxy Group]
+
+# ══════════════════════════════════════════════════════════════
+# 第 1 层 · 入口 —— 全文件唯一需要替换的地方
+# ══════════════════════════════════════════════════════════════
+# A. 节点已在 [Proxy] 段（本地 nodes.dconf，由 Sub-Store 生成）
+🛫 全部节点 = select, include-all-proxies=true, policy-regex-filter=^(?!.*(剩余流量|套餐到期|续费|官网|群组|重置|过期)).*$
+#
+# B. 直接使用机场订阅链接时改用这一行
+# 🛫 全部节点 = select, policy-path=你的订阅地址, update-interval=3600, policy-regex-filter=^(?!.*(剩余流量|套餐到期|续费|官网|群组|重置|过期)).*$
+
+# ══════════════════════════════════════════════════════════════
+# 第 2 层 · 分组 —— hidden=1，不占 UI
+# ══════════════════════════════════════════════════════════════
+
+# 自建节点：可控、无流量限制、IP 稳定
+🏠 自建 = select, include-other-group=🛫 全部节点, hidden=1, policy-regex-filter=(🏠)|(自建)|(^racked?[- ])|(^mac)|(^h2n$)
+
+# AI 优选：家宽 / 住宅 / 双 ISP —— 机房 IP 最容易触发风控
+🧬 AI优选 = select, include-other-group=🛫 全部节点, hidden=1, policy-regex-filter=(家宽)|(住宅)|(双ISP)|(适合AI)|(Claude)
+
+# 地区分组
+🇺🇸 美国 = smart, include-other-group=🛫 全部节点, hidden=1, policy-regex-filter=(🇺🇸)|(美国)|(United ?States)|(\bUS\b)
+🇯🇵 日本 = smart, include-other-group=🛫 全部节点, hidden=1, policy-regex-filter=(🇯🇵)|(日本)|(Japan)|(\bJP\b)
+🇭🇰 香港 = smart, include-other-group=🛫 全部节点, hidden=1, policy-regex-filter=(🇭🇰)|(香港)|(Hong ?Kong)|(\bHK\b)
+🇸🇬 新加坡 = smart, include-other-group=🛫 全部节点, hidden=1, policy-regex-filter=(🇸🇬)|(新加坡)|(狮城)|(Singapore)|(\bSG\b)
+
+# ══════════════════════════════════════════════════════════════
+# 第 3 层 · 业务 —— 只引用上面的组，永不出现节点名
+# ══════════════════════════════════════════════════════════════
+
+# AI：必须 select 手动固定，绝不能用 smart/url-test
+# 出口 IP 一变就可能触发风控，自动切换等于自杀
+🤖 AI = select, 🧬 AI优选, 🏠 自建, 🇯🇵 日本, 🇺🇸 美国, 🇸🇬 新加坡
+
+🚀 代理 = select, 🇭🇰 香港, 🇸🇬 新加坡, 🇯🇵 日本, 🇺🇸 美国, 🏠 自建, 🛫 全部节点, DIRECT
+🎬 流媒体 = select, 🇸🇬 新加坡, 🇭🇰 香港, 🇯🇵 日本, 🇺🇸 美国, 🚀 代理
+📲 电报 = select, 🇸🇬 新加坡, 🇭🇰 香港, 🇯🇵 日本, 🚀 代理
+🍎 苹果 = select, DIRECT, 🚀 代理
+Ⓜ️ 微软 = select, DIRECT, 🚀 代理
+🌐 直连 = select, DIRECT, 🚀 代理
+🛑 拦截 = select, REJECT, DIRECT

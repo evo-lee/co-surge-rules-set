@@ -1,0 +1,43 @@
+# AI 服务 —— 路由至 🤖 AI 组（手动固定出口，防风控）
+#
+# 原则：只用 DOMAIN / DOMAIN-SUFFIX，不用宽泛的 DOMAIN-KEYWORD。
+# 关键词匹配会误伤无关域名（例如 keyword "codex" 会命中 codexdna.com 这类
+# 生物公司域名），把正常流量塞进一个手动固定出口的策略组。
+
+# ── Anthropic / Claude ──
+DOMAIN-SUFFIX,anthropic.com
+DOMAIN-SUFFIX,claude.ai
+DOMAIN-SUFFIX,claudeusercontent.com
+
+# ── OpenAI / ChatGPT / Sora ──
+DOMAIN-SUFFIX,openai.com
+DOMAIN-SUFFIX,chatgpt.com
+DOMAIN-SUFFIX,oaistatic.com
+DOMAIN-SUFFIX,oaiusercontent.com
+DOMAIN-SUFFIX,sora.com
+
+# ── Google AI ──
+DOMAIN-SUFFIX,gemini.google.com
+DOMAIN-SUFFIX,aistudio.google.com
+DOMAIN-SUFFIX,makersuite.google.com
+DOMAIN-SUFFIX,generativelanguage.googleapis.com
+DOMAIN-SUFFIX,deepmind.google
+DOMAIN-SUFFIX,deepmind.com
+
+# ── GitHub Copilot ──
+DOMAIN-SUFFIX,githubcopilot.com
+DOMAIN,copilot.github.com
+DOMAIN,copilot-proxy.githubusercontent.com
+
+# ── 其他 ──
+DOMAIN-SUFFIX,perplexity.ai
+DOMAIN-SUFFIX,x.ai
+DOMAIN-SUFFIX,grok.com
+DOMAIN-SUFFIX,mistral.ai
+DOMAIN-SUFFIX,huggingface.co
+DOMAIN-SUFFIX,midjourney.com
+DOMAIN-SUFFIX,elevenlabs.io
+DOMAIN-SUFFIX,cursor.com
+DOMAIN-SUFFIX,cursor.sh
+DOMAIN-SUFFIX,poe.com
+DOMAIN-SUFFIX,character.ai
