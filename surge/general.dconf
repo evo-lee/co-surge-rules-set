@@ -7,7 +7,8 @@ encrypted-dns-server = h3://223.5.5.5/dns-query, https://doh.pub/dns-query
 # 明文兜底。不放 1.1.1.1：UDP/53 出境慢且易被污染
 dns-server = 223.5.5.5, 119.29.29.29
 # 劫持硬编码明文 DNS 的应用（如写死 8.8.8.8:53），堵住最后一条泄漏路径
-hijack-dns = %DNS-SERVERS%:53
+# 不用 *:53：会一并劫持 Tailscale MagicDNS(100.100.100.100:53) 和路由器下发的内网解析器
+hijack-dns = 8.8.8.8:53, 8.8.4.4:53, 1.1.1.1:53, 1.0.0.1:53, 9.9.9.9:53, 208.67.222.222:53
 # CN-only 库，比内置 MaxMind 更小更准
 geoip-maxmind-url = https://cdn.jsdelivr.net/gh/Hackl0us/GeoIP2-CN@release/Country.mmdb
 # 连通性检测与局域网域名必须拿真实 IP，否则 force-remote-dns 会破坏门户认证
