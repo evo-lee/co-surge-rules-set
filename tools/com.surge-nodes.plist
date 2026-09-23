@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  launchd 定时任务模板。
+
+  安装：
+    1. 把 __REPO__ 替换为本仓库的绝对路径
+    2. cp tools/com.surge-nodes.plist ~/Library/LaunchAgents/
+    3. launchctl load ~/Library/LaunchAgents/com.surge-nodes.plist
+
+  立即跑一次： launchctl start com.surge-nodes
+  看日志：     tail -f ~/Library/Logs/surge-nodes.log
+  卸载：       launchctl unload ~/Library/LaunchAgents/com.surge-nodes.plist
+-->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.surge-nodes</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>__REPO__/tools/fetch-nodes.sh</string>
+    </array>
+
+    <!-- 每 6 小时。机场节点变动不频繁，再密没有意义。 -->
+    <key>StartInterval</key>
+    <integer>21600</integer>
+
+    <!-- 开机 / 加载时跑一次。此时 Surge 可能还没起来，
+         脚本会因代理不可达而退出并保留旧文件，属预期行为。 -->
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>StandardOutPath</key>
+    <string>__HOME__/Library/Logs/surge-nodes.log</string>
+    <key>StandardErrorPath</key>
+    <string>__HOME__/Library/Logs/surge-nodes.log</string>
+
+    <key>ProcessType</key>
+    <string>Background</string>
+</dict>
+</plist>
