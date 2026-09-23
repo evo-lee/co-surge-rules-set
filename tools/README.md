@@ -44,3 +44,31 @@ http-api = 你的key@127.0.0.1:6171
 ## com.surge-nodes.plist
 
 launchd 定时任务模板，默认每 6 小时跑一次。安装步骤见文件内注释。
+
+## `pre-commit.sh` — 提交前凭据扫描
+
+本仓库是公开的。`[Proxy]` 段的一切（节点地址、密码、UUID、订阅链接）都不得入库，
+而 git 历史一旦推送就删不掉，所以拦截点必须在 commit 之前而不是 push 之后。
+
+安装（clone 之后跑一次，`.git/hooks/` 不受版本控制）：
+
+```sh
+ln -sf ../../tools/pre-commit.sh .git/hooks/pre-commit
+```
+
+只扫**暂存的新增行**，也就是这次真正会进历史的字节。四层检查：
+
+| 层 | 拦什么 |
+|---|---|
+| 路径闸门 | `nodes.dconf`、`Proxy*.dconf`、`*.conf`（放行 `*.example.conf`）、`.env`、`secrets/`、`*.p12/pem/key`、`sub-store*.json`。`git add -f` 也挡 |
+| 形状扫描 | `ss://` `vmess://` 等节点链接、32 位十六进制、UUID、`password=`/`ca-p12=` 类赋值、≥60 位 Base64、非白名单 `IP:端口` |
+| 主机名白名单 | 订阅链接的特征就是一个没见过的域名，所以反过来只放行已知公开源（jsDelivr / GitHub / sub.store / cp.cloudflare.com …） |
+| 真实数据反查 | 读本机 `nodes.dconf`，把真实服务器地址和凭据逐个在暂存内容里搜。这层能抓住裸域名——它不带 `http://`，白名单层看不见 |
+
+第四层只在 `~/Library/Application Support/Surge/Profiles/nodes.dconf` 存在时运行，不联网。
+
+新增一个公开数据源被拦下时，把域名加进脚本里的 `HOST_OK`，不要用 `--no-verify` 绕。
+`--no-verify` 留给确知的误报。
+
+已验证的 6 个用例：真实 hysteria2 节点行 / 订阅链接 / 强加 `nodes.dconf` / 含 `ca-passphrase`
+的完整 `.conf` / 裸域名形式的真实节点地址 —— 全部拦下；`*.example.conf` 正常放行。
