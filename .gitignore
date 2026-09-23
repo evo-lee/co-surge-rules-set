@@ -1,0 +1,41 @@
+# ─────────────────────────────────────────────────────────────
+# 凭证隔离 —— 这个仓库是公开的，以下内容永远不得进入版本控制
+# ─────────────────────────────────────────────────────────────
+
+# 节点 / 代理定义（含服务器地址、端口、密码、UUID）
+nodes.dconf
+*nodes*.dconf
+proxies.dconf
+*proxy*.dconf
+*.proxies
+Proxy*.dconf
+
+# 完整 Surge 配置（[Proxy] 段必然带凭证）
+*.conf
+!*.example.conf
+
+# 证书与密钥
+*.p12
+*.pem
+*.key
+*.crt
+*.mobileconfig
+
+# 订阅链接 / token / 环境变量
+.env
+.env.*
+!.env.example
+*subscription*
+*.token
+secrets/
+
+# Sub-Store 导出产物
+sub-store*.json
+artifacts/
+
+# 系统与编辑器
+.DS_Store
+*.swp
+.idea/
+.vscode/
+node_modules/
