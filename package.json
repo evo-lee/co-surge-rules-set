@@ -1,10 +1,10 @@
 {
-  "name": "rule-set",
+  "name": "co-surge-rules-set",
   "version": "1.0.0",
   "private": true,
   "description": "One routing rule plan rendered for Surge, Shadowrocket, Clash/Mihomo and Quantumult X",
   "license": "GPL-3.0-only",
-  "repository": "github:evo-lee/rule-set",
+  "repository": "github:evo-lee/co-surge-rules-set",
   "engines": {
     "node": ">=20.0.0"
   },

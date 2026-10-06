@@ -1,4 +1,4 @@
-# rule-set
+# co-surge-rules-set
 
 [English](#english) | [中文](#中文)
 
@@ -38,7 +38,7 @@ The rules only reference these policy names. **Your config must define the `AI` 
 
 ### Usage
 
-Base URL: `https://cdn.jsdelivr.net/gh/evo-lee/rule-set@release`
+Base URL: `https://cdn.jsdelivr.net/gh/evo-lee/co-surge-rules-set@release`
 
 | Client | Rules snippet | Rule sets published here |
 |---|---|---|
@@ -50,7 +50,7 @@ Copy the snippet into your config, or reference single sets:
 
 ```ini
 # Surge
-RULE-SET,https://cdn.jsdelivr.net/gh/evo-lee/rule-set@release/surge/ai.list,AI,force-remote-dns
+RULE-SET,https://cdn.jsdelivr.net/gh/evo-lee/co-surge-rules-set@release/surge/ai.list,AI,force-remote-dns
 ```
 
 ```yaml
@@ -60,7 +60,7 @@ rule-providers:
     type: http
     behavior: classical
     format: text
-    url: https://cdn.jsdelivr.net/gh/evo-lee/rule-set@release/clash/ai.txt
+    url: https://cdn.jsdelivr.net/gh/evo-lee/co-surge-rules-set@release/clash/ai.txt
     path: ./ruleset/ai.txt
     interval: 86400
 ```
@@ -112,7 +112,7 @@ GPL-3.0. Loyalsoldier data ([surge-rules](https://github.com/Loyalsoldier/surge-
 
 ### 使用
 
-基础地址：`https://cdn.jsdelivr.net/gh/evo-lee/rule-set@release`
+基础地址：`https://cdn.jsdelivr.net/gh/evo-lee/co-surge-rules-set@release`
 
 | 客户端 | 规则片段 | 本仓库发布的规则集 |
 |---|---|---|

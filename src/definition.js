@@ -9,7 +9,7 @@ const path = require('path');
 const POLICIES = ['AI', 'Proxy', 'DIRECT', 'REJECT'];
 
 // Where the `release` branch is served from. Override for forks.
-const RELEASE_BASE = process.env.RULESET_BASE || 'https://cdn.jsdelivr.net/gh/evo-lee/rule-set@release';
+const RELEASE_BASE = process.env.RULESET_BASE || 'https://cdn.jsdelivr.net/gh/evo-lee/co-surge-rules-set@release';
 
 // All domain/IP data comes from one upstream (Loyalsoldier, GPL-3.0) so every
 // client classifies each domain identically. Each client references

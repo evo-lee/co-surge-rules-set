@@ -1,4 +1,4 @@
-# AGENTS.md — rule-set
+# AGENTS.md — co-surge-rules-set
 
 Public routing rule set. One client-agnostic rule plan is rendered for Surge, Shadowrocket and Clash/Mihomo, built by GitHub Actions and published to the `release` branch (served via jsDelivr). No proxies, no subscriptions, no server.
 

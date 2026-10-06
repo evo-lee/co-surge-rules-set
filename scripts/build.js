@@ -28,7 +28,7 @@ function write(rel, content) {
 function main() {
   fs.rmSync(outDir, { recursive: true, force: true });
   // No timestamp: identical inputs must give identical output so CI can skip no-op releases.
-  const header = '# https://github.com/evo-lee/rule-set (GPL-3.0)\n';
+  const header = '# https://github.com/evo-lee/co-surge-rules-set (GPL-3.0)\n';
 
   // Only our own sets are published; referenced sets (Loyalsoldier, xiaolai) are
   // fetched by clients straight from their upstream URLs.
