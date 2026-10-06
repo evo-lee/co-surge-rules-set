@@ -3,7 +3,7 @@
 //
 // Policy contract: rules only reference these names. Every config that uses the
 // rules must provide policy groups / outbounds named `AI` and `Proxy`; DIRECT
-// and REJECT map to each client's built-ins (sing-box: outbound `direct`).
+// and REJECT map to each client's built-ins.
 const path = require('path');
 
 const POLICIES = ['AI', 'Proxy', 'DIRECT', 'REJECT'];
@@ -13,8 +13,8 @@ const RELEASE_BASE = process.env.RULESET_BASE || 'https://cdn.jsdelivr.net/gh/ev
 
 // All domain/IP data comes from one upstream (Loyalsoldier, GPL-3.0) so every
 // client classifies each domain identically. Clients with a native Loyalsoldier
-// build reference it directly; sing-box and Quantumult X get our conversion of
-// the Surge build.
+// build reference it directly; Quantumult X gets our conversion of the Surge
+// build.
 const LS_SURGE = 'https://cdn.jsdelivr.net/gh/Loyalsoldier/surge-rules@release/ruleset';
 const LS_CLASH = 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release';
 
@@ -30,8 +30,8 @@ const AI_LIST = path.join(__dirname, '..', 'rules', 'ai.list');
 
 // Rule sets. `source` is a URL or local file in Surge syntax; `only` keeps one
 // kind of entry. Sets without `surge` / `clash` upstreams are published by us.
-// Domains and IPs are separate sets so DNS-aware clients can match the domain
-// part without the IP part turning into a response filter (sing-box).
+// Domains and IPs are separate sets so the IP part can carry `no-resolve`
+// without affecting domain matching.
 const RULE_SETS = {
   ai: { source: AI_LIST, only: 'domain' },
   'ai-ip': { source: AI_LIST, only: 'ip' },
@@ -46,7 +46,7 @@ const RULE_SETS = {
 };
 
 // `lan` builtin: Surge uses RULE-SET,LAN; Clash uses Loyalsoldier lancidr;
-// sing-box uses ip_is_private; others get these CIDRs.
+// others get these CIDRs.
 const CLASH_LANCIDR = `${LS_CLASH}/lancidr.txt`;
 const LAN_CIDRS = [
   'IP-CIDR,10.0.0.0/8',
@@ -66,7 +66,6 @@ const LAN_CIDRS = [
 //   { builtin: 'system' | 'lan', policy }
 //   { geoip, policy }
 //   { final, dnsFailed? }
-// `remoteDns` also tells DNS-aware renderers (sing-box) to resolve the set remotely.
 const RULES = [
   { comment: 'AI services (highest priority — manual AI group to prevent account bans)' },
   { set: 'ai', policy: 'AI', remoteDns: true },

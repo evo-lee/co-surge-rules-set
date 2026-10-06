@@ -12,7 +12,6 @@ const { setUrl } = require('../src/paths');
 const { toYaml } = require('../src/yaml');
 const { renderSurgeRules, renderSurgeList } = require('../src/render/surge');
 const { renderClashRules } = require('../src/render/clash');
-const { renderSingboxRules, renderSingboxSet } = require('../src/render/singbox');
 const { renderQxRules, renderQxSet, SYNTHETIC_SETS } = require('../src/render/qx');
 
 const SNAPSHOT_DIR = path.join(__dirname, 'snapshots');
@@ -106,32 +105,6 @@ test('clash rules', () => {
   }
   assert.equal(out['rule-providers'].ai.format, 'text');
   assert.equal(out.rules[out.rules.length - 1], 'MATCH,Proxy');
-});
-
-test('sing-box rules', () => {
-  const out = renderSingboxRules(ctx);
-  matchSnapshot('singbox.json', JSON.stringify(out, null, 2) + '\n');
-
-  const tags = new Set(out.route.rule_set.map(s => s.tag));
-  for (const rule of out.route.rules) {
-    if (rule.rule_set) assert.ok(tags.has(rule.rule_set), `undefined rule_set ${rule.rule_set}`);
-  }
-  // A rule set containing ip_cidr in a DNS rule turns into a response filter.
-  const ipSets = Object.keys(RULE_SETS).filter(id => RULE_SETS[id].only === 'ip' || RULE_SETS[id].clash?.behavior === 'ipcidr');
-  for (const rule of out.dns.rules) {
-    for (const tag of [].concat(rule.rule_set || [])) assert.ok(!ipSets.includes(tag), tag);
-  }
-  assert.equal(out.route.final, 'Proxy');
-});
-
-test('sing-box set never mixes domain and ip fields in one rule', () => {
-  const set = renderSingboxSet(sampleItems);
-  assert.equal(set.version, 2);
-  for (const rule of set.rules) {
-    const hasIp = 'ip_cidr' in rule;
-    const hasDomain = ['domain', 'domain_suffix', 'domain_keyword'].some(k => k in rule);
-    assert.ok(!(hasIp && hasDomain));
-  }
 });
 
 test('quantumult x rules', () => {
