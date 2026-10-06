@@ -1,7 +1,12 @@
-// Clash / Mihomo: Loyalsoldier sets point at its native Clash build; our own
-// sets are published as classical text.
+// Clash / Mihomo: referenced sets point at their upstream URLs; our own sets
+// are published as classical text.
 const { RULES, RULE_SETS, CLASH_LANCIDR } = require('../definition');
 const { renderSurgeList } = require('./surge');
+
+function provider(id, { url, behavior, format }) {
+  const ext = format === 'text' ? 'txt' : 'yaml';
+  return { type: 'http', behavior, ...(format ? { format } : {}), url, path: `./ruleset/${id}.${ext}`, interval: 86400 };
+}
 
 function renderClashRules(ctx) {
   const providers = {};
@@ -9,13 +14,11 @@ function renderClashRules(ctx) {
 
   for (const rule of RULES) {
     if (rule.set) {
-      const upstream = RULE_SETS[rule.set].clash;
-      providers[rule.set] = upstream
-        ? { type: 'http', behavior: upstream.behavior, url: upstream.url, path: `./ruleset/${rule.set}.yaml`, interval: 86400 }
-        : { type: 'http', behavior: 'classical', format: 'text', url: ctx.setUrl('clash', rule.set), path: `./ruleset/${rule.set}.txt`, interval: 86400 };
+      const upstream = RULE_SETS[rule.set].clash || { url: ctx.setUrl('clash', rule.set), behavior: 'classical', format: 'text' };
+      providers[rule.set] = provider(rule.set, upstream);
       rules.push(`RULE-SET,${rule.set},${rule.policy}${rule.noResolve ? ',no-resolve' : ''}`);
     } else if (rule.builtin === 'lan') {
-      providers.lancidr = { type: 'http', behavior: 'ipcidr', url: CLASH_LANCIDR, path: './ruleset/lancidr.yaml', interval: 86400 };
+      providers.lancidr = provider('lancidr', { url: CLASH_LANCIDR, behavior: 'ipcidr' });
       rules.push(`RULE-SET,lancidr,${rule.policy},no-resolve`);
     } else if (rule.geoip) {
       rules.push(`GEOIP,${rule.geoip},${rule.policy}`);

@@ -12,7 +12,6 @@ const { setUrl } = require('../src/paths');
 const { toYaml } = require('../src/yaml');
 const { renderSurgeRules, renderSurgeList } = require('../src/render/surge');
 const { renderClashRules } = require('../src/render/clash');
-const { renderQxRules, renderQxSet, SYNTHETIC_SETS } = require('../src/render/qx');
 
 const SNAPSHOT_DIR = path.join(__dirname, 'snapshots');
 
@@ -66,14 +65,25 @@ test('rule plan only references known policies and sets', () => {
   assert.ok(RULES[RULES.length - 1].final, 'final must be last');
 });
 
-test('rules/ai.list is valid and splits into domain and ip sets', async () => {
+test('rule sets are either referenced by URL or built from a local source', () => {
+  for (const [id, def] of Object.entries(RULE_SETS)) {
+    const referenced = Boolean(def.surge && def.clash?.url);
+    assert.ok(referenced !== Boolean(def.source), `${id}: needs URLs xor a local source`);
+    // Clients fetch these directly; raw.githubusercontent.com is often unreachable from mainland China.
+    if (referenced) for (const url of [def.surge, def.clash.url]) assert.ok(!url.includes('raw.githubusercontent.com'), id);
+  }
+  // Unlicensed upstream: must only ever be referenced, never built into the release.
+  assert.equal(RULE_SETS['ai-anthropic'].source, undefined);
+});
+
+test('rules/ai.list is valid and splits into domain and ip sets', () => {
   const text = fs.readFileSync(path.join(__dirname, '..', 'rules', 'ai.list'), 'utf8');
   const { items, skipped } = parseSurgeList(text);
   assert.deepEqual(skipped, [], 'ai.list has unsupported lines');
   assert.equal(dedupeItems(items).length, items.length, 'ai.list has duplicates');
 
-  const ai = await loadSet('ai');
-  const aiIp = await loadSet('ai-ip');
+  const ai = loadSet('ai');
+  const aiIp = loadSet('ai-ip');
   assert.ok(ai.items.every(i => ['domain', 'suffix', 'keyword'].includes(i.type)));
   assert.ok(aiIp.items.every(i => ['ip', 'ip6'].includes(i.type)));
   assert.equal(ai.items.length + aiIp.items.length, items.length);
@@ -85,6 +95,8 @@ test('surge rules', () => {
   const lines = out.trim().split('\n').filter(l => l && !l.startsWith('#') && l !== '[Rule]');
   assert.match(lines[0], /\/surge\/ai\.list,AI,force-remote-dns$/);
   assert.match(lines[1], /\/surge\/ai-ip\.list,AI,no-resolve$/);
+  // Mixed domain/IP list near the top: without no-resolve every request would hit local DNS.
+  assert.match(lines[2], /xiaolai\/anthropic-claude-surge-rules-set@main\/dist\/anthropic\.list,AI,no-resolve$/);
   assert.equal(lines[lines.length - 1], 'FINAL,Proxy,dns-failed');
 });
 
@@ -104,16 +116,10 @@ test('clash rules', () => {
     if (m) assert.ok(out['rule-providers'][m[1]], `missing provider ${m[1]}`);
   }
   assert.equal(out['rule-providers'].ai.format, 'text');
+  assert.equal(out['rule-providers']['ai-anthropic'].format, 'text');
+  assert.equal(out['rule-providers']['ai-anthropic'].path, './ruleset/ai-anthropic.txt');
+  assert.ok(out.rules.includes('RULE-SET,ai-anthropic,AI,no-resolve'));
   assert.equal(out.rules[out.rules.length - 1], 'MATCH,Proxy');
-});
-
-test('quantumult x rules', () => {
-  const out = renderQxRules(ctx);
-  matchSnapshot('qx.conf', out);
-  assert.equal(out.split('[filter_local]')[1].trim(), 'final, Proxy', 'filter_local must only hold final');
-  for (const id of Object.keys(SYNTHETIC_SETS)) assert.notEqual(renderQxSet(id, []), null, id);
-  assert.equal(renderQxSet('nope', []), null);
-  assert.equal(renderQxSet('ai', sampleItems).split('\n')[0], 'host-suffix, anthropic.com, AI');
 });
 
 test('surge list has no policies', () => {

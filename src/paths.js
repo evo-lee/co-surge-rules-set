@@ -3,15 +3,13 @@ const { RELEASE_BASE } = require('./definition');
 
 const SET_FILE = {
   surge: id => `surge/${id}.list`,
-  clash: id => `clash/${id}.txt`,
-  qx: id => `qx/${id}.list`
+  clash: id => `clash/${id}.txt`
 };
 
 const RULES_FILE = {
   surge: 'surge/rules.conf',
   shadowrocket: 'shadowrocket/rules.conf',
-  clash: 'clash/rules.yaml',
-  qx: 'qx/rules.conf'
+  clash: 'clash/rules.yaml'
 };
 
 function setPath(client, id) {

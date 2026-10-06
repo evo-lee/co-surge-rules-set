@@ -12,29 +12,33 @@ const POLICIES = ['AI', 'Proxy', 'DIRECT', 'REJECT'];
 const RELEASE_BASE = process.env.RULESET_BASE || 'https://cdn.jsdelivr.net/gh/evo-lee/rule-set@release';
 
 // All domain/IP data comes from one upstream (Loyalsoldier, GPL-3.0) so every
-// client classifies each domain identically. Clients with a native Loyalsoldier
-// build reference it directly; Quantumult X gets our conversion of the Surge
-// build.
+// client classifies each domain identically. Each client references
+// Loyalsoldier's native build for it by URL; nothing is downloaded or converted.
+// All URLs use jsDelivr: raw.githubusercontent.com is often unreachable from
+// mainland China before a proxy is up.
 const LS_SURGE = 'https://cdn.jsdelivr.net/gh/Loyalsoldier/surge-rules@release/ruleset';
 const LS_CLASH = 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release';
 
 function loyalsoldier(name, behavior) {
-  return {
-    source: `${LS_SURGE}/${name}.txt`,
-    surge: `${LS_SURGE}/${name}.txt`,
-    clash: { url: `${LS_CLASH}/${name}.txt`, behavior }
-  };
+  return { surge: `${LS_SURGE}/${name}.txt`, clash: { url: `${LS_CLASH}/${name}.txt`, behavior } };
 }
 
 const AI_LIST = path.join(__dirname, '..', 'rules', 'ai.list');
 
-// Rule sets. `source` is a URL or local file in Surge syntax; `only` keeps one
-// kind of entry. Sets without `surge` / `clash` upstreams are published by us.
+// xiaolai's Anthropic list (Surge syntax). It has no license, so it is only
+// ever referenced by URL — never copied, converted or published by this repo.
+// It mixes domains and IP ranges, so the plan references it with no-resolve.
+const XIAOLAI_ANTHROPIC = 'https://cdn.jsdelivr.net/gh/xiaolai/anthropic-claude-surge-rules-set@main/dist/anthropic.list';
+
+// Rule sets. Either referenced by URL (`surge` / `clash`), or built by us from
+// a local Surge-syntax `source` file (`only` keeps one kind of entry) and
+// published to the release branch.
 // Domains and IPs are separate sets so the IP part can carry `no-resolve`
 // without affecting domain matching.
 const RULE_SETS = {
   ai: { source: AI_LIST, only: 'domain' },
   'ai-ip': { source: AI_LIST, only: 'ip' },
+  'ai-anthropic': { surge: XIAOLAI_ANTHROPIC, clash: { url: XIAOLAI_ANTHROPIC, behavior: 'classical', format: 'text' } },
   private: loyalsoldier('private', 'domain'),
   reject: loyalsoldier('reject', 'domain'),
   icloud: loyalsoldier('icloud', 'domain'),
@@ -46,7 +50,7 @@ const RULE_SETS = {
 };
 
 // `lan` builtin: Surge uses RULE-SET,LAN; Clash uses Loyalsoldier lancidr;
-// others get these CIDRs.
+// Shadowrocket gets these CIDRs.
 const CLASH_LANCIDR = `${LS_CLASH}/lancidr.txt`;
 const LAN_CIDRS = [
   'IP-CIDR,10.0.0.0/8',
@@ -70,6 +74,7 @@ const RULES = [
   { comment: 'AI services (highest priority — manual AI group to prevent account bans)' },
   { set: 'ai', policy: 'AI', remoteDns: true },
   { set: 'ai-ip', policy: 'AI', noResolve: true },
+  { set: 'ai-anthropic', policy: 'AI', noResolve: true },
   { comment: 'Loyalsoldier rules (whitelist mode)' },
   { set: 'private', policy: 'DIRECT' },
   { set: 'reject', policy: 'REJECT' },

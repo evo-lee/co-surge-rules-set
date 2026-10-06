@@ -13,6 +13,13 @@ rule-providers:
     url: "https://example.test/rule-set/clash/ai-ip.txt"
     path: "./ruleset/ai-ip.txt"
     interval: 86400
+  ai-anthropic:
+    type: "http"
+    behavior: "classical"
+    format: "text"
+    url: "https://cdn.jsdelivr.net/gh/xiaolai/anthropic-claude-surge-rules-set@main/dist/anthropic.list"
+    path: "./ruleset/ai-anthropic.txt"
+    interval: 86400
   private:
     type: "http"
     behavior: "domain"
@@ -70,6 +77,7 @@ rule-providers:
 rules:
   - "RULE-SET,ai,AI"
   - "RULE-SET,ai-ip,AI,no-resolve"
+  - "RULE-SET,ai-anthropic,AI,no-resolve"
   - "RULE-SET,private,DIRECT"
   - "RULE-SET,reject,REJECT"
   - "RULE-SET,icloud,DIRECT"

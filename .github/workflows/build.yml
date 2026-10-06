@@ -4,9 +4,6 @@ on:
   push:
     branches: [main]
   pull_request:
-  schedule:
-    # Daily, after Loyalsoldier's release build.
-    - cron: '30 23 * * *'
   workflow_dispatch:
 
 permissions:
