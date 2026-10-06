@@ -1,0 +1,92 @@
+# https://github.com/evo-lee/co-surge-rules-set (GPL-3.0)
+rule-providers:
+  ai:
+    type: "http"
+    behavior: "classical"
+    format: "text"
+    url: "https://cdn.jsdelivr.net/gh/evo-lee/co-surge-rules-set@release/clash/ai.txt"
+    path: "./ruleset/ai.txt"
+    interval: 86400
+  ai-ip:
+    type: "http"
+    behavior: "classical"
+    format: "text"
+    url: "https://cdn.jsdelivr.net/gh/evo-lee/co-surge-rules-set@release/clash/ai-ip.txt"
+    path: "./ruleset/ai-ip.txt"
+    interval: 86400
+  ai-anthropic:
+    type: "http"
+    behavior: "classical"
+    format: "text"
+    url: "https://cdn.jsdelivr.net/gh/xiaolai/anthropic-claude-surge-rules-set@main/dist/anthropic.list"
+    path: "./ruleset/ai-anthropic.txt"
+    interval: 86400
+  private:
+    type: "http"
+    behavior: "domain"
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/private.txt"
+    path: "./ruleset/private.yaml"
+    interval: 86400
+  reject:
+    type: "http"
+    behavior: "domain"
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/reject.txt"
+    path: "./ruleset/reject.yaml"
+    interval: 86400
+  icloud:
+    type: "http"
+    behavior: "domain"
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/icloud.txt"
+    path: "./ruleset/icloud.yaml"
+    interval: 86400
+  apple:
+    type: "http"
+    behavior: "domain"
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/apple.txt"
+    path: "./ruleset/apple.yaml"
+    interval: 86400
+  proxy:
+    type: "http"
+    behavior: "domain"
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/proxy.txt"
+    path: "./ruleset/proxy.yaml"
+    interval: 86400
+  direct:
+    type: "http"
+    behavior: "domain"
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/direct.txt"
+    path: "./ruleset/direct.yaml"
+    interval: 86400
+  telegramcidr:
+    type: "http"
+    behavior: "ipcidr"
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/telegramcidr.txt"
+    path: "./ruleset/telegramcidr.yaml"
+    interval: 86400
+  cncidr:
+    type: "http"
+    behavior: "ipcidr"
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/cncidr.txt"
+    path: "./ruleset/cncidr.yaml"
+    interval: 86400
+  lancidr:
+    type: "http"
+    behavior: "ipcidr"
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/lancidr.txt"
+    path: "./ruleset/lancidr.yaml"
+    interval: 86400
+rules:
+  - "RULE-SET,ai,AI"
+  - "RULE-SET,ai-ip,AI,no-resolve"
+  - "RULE-SET,ai-anthropic,AI,no-resolve"
+  - "RULE-SET,private,DIRECT"
+  - "RULE-SET,reject,REJECT"
+  - "RULE-SET,icloud,DIRECT"
+  - "RULE-SET,apple,DIRECT"
+  - "RULE-SET,proxy,Proxy"
+  - "RULE-SET,direct,DIRECT"
+  - "RULE-SET,telegramcidr,Proxy,no-resolve"
+  - "RULE-SET,cncidr,DIRECT,no-resolve"
+  - "RULE-SET,lancidr,DIRECT,no-resolve"
+  - "GEOIP,CN,DIRECT"
+  - "MATCH,Proxy"
