@@ -1,0 +1,75 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    # Daily, after Loyalsoldier's release build.
+    - cron: '30 23 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  SING_BOX_VERSION: 1.14.2
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Test
+        run: npm test
+
+      - name: Install sing-box
+        run: |
+          curl -fsSL -o sing-box.tgz "https://github.com/SagerNet/sing-box/releases/download/v${SING_BOX_VERSION}/sing-box-${SING_BOX_VERSION}-linux-amd64.tar.gz"
+          tar xzf sing-box.tgz
+          echo "SING_BOX=$PWD/sing-box-${SING_BOX_VERSION}-linux-amd64/sing-box" >> "$GITHUB_ENV"
+
+      - name: Build
+        run: REQUIRE_SRS=1 npm run build
+
+      - name: Verify sing-box artifacts
+        run: npm run verify
+
+      - name: Publish release branch
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cd dist
+          git init -q -b release
+          git add -A
+          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          # Skip when the content is identical to the current release.
+          if git fetch -q --depth=1 origin release 2>/dev/null \
+             && [ "$(git write-tree)" = "$(git rev-parse 'FETCH_HEAD^{tree}')" ]; then
+            echo "No changes; skipping release."
+            exit 0
+          fi
+          git -c user.name='github-actions[bot]' \
+              -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+              commit -q -m "release: $(date -u +%F) from ${GITHUB_SHA::7}"
+          # Single-commit orphan branch keeps the repo small.
+          git push -q -f origin release
+          echo "PUBLISHED=1" >> "$GITHUB_ENV"
+
+      - name: Purge jsDelivr cache
+        if: env.PUBLISHED == '1'
+        run: |
+          cd dist
+          find . -type f ! -path './.git/*' | sed 's|^\./||' | while read -r f; do
+            curl -fsS -o /dev/null "https://purge.jsdelivr.net/gh/${GITHUB_REPOSITORY}@release/${f}" || echo "purge failed: ${f}"
+          done

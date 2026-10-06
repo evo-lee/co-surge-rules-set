@@ -1,0 +1,16 @@
+{
+  "name": "rule-set",
+  "version": "1.0.0",
+  "private": true,
+  "description": "One routing rule plan rendered for Surge, Shadowrocket, Clash/Mihomo, sing-box and Quantumult X",
+  "license": "GPL-3.0-only",
+  "repository": "github:evo-lee/rule-set",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "build": "node scripts/build.js",
+    "verify": "node scripts/verify-singbox.js",
+    "test": "node --test"
+  }
+}
