@@ -80,6 +80,7 @@ test('rules/ai.list is valid and splits into domain and ip sets', () => {
   const text = fs.readFileSync(path.join(__dirname, '..', 'rules', 'ai.list'), 'utf8');
   const { items, skipped } = parseSurgeList(text);
   assert.deepEqual(skipped, [], 'ai.list has unsupported lines');
+  assert.ok(!items.some(i => i.type === 'keyword'), 'ai.list must not use DOMAIN-KEYWORD');
   assert.equal(dedupeItems(items).length, items.length, 'ai.list has duplicates');
 
   const ai = loadSet('ai');

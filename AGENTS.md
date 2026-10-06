@@ -39,6 +39,7 @@ No dependencies. Node >= 20.
 
 - **Policy contract**: rules reference only `AI`, `Proxy`, `DIRECT`, `REJECT`. Changing these names breaks every consumer.
 - **AI first**: the `ai` / `ai-ip` sets stay at the top of the plan.
+- **No DOMAIN-KEYWORD in `rules/ai.list`**: keywords hit unrelated domains (`codex` → codexdna.com, `openai` → third-party mirrors) and pin them to the fixed AI exit. Tests enforce this.
 - **Single upstream**: all domain/IP data comes from Loyalsoldier. Do not add sets from other sources (e.g. MetaCubeX); they classify ~200 domains on the opposite side. `google.txt` is excluded on purpose (marked "慎用" upstream).
 - **Licensing**: output is GPL-3.0 because Loyalsoldier data is GPL-3.0. Never redistribute content from sources without a compatible license. The xiaolai Anthropic list has no license, so it is only referenced by URL (`ai-anthropic`) and must never get a local `source` or be published. `rules/ai.list` entries must come from first-party sources.
 - **Domain/IP split**: domain and IP entries live in separate sets (`ai` / `ai-ip`) so the IP set carries `no-resolve` without affecting domain matching.

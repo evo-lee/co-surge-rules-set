@@ -67,7 +67,7 @@ rule-providers:
 
 ### Contributing
 
-- AI domains/IPs: edit [`rules/ai.list`](rules/ai.list) (Surge syntax). Only add entries from first-party sources and link the source in the PR.
+- AI domains/IPs: edit [`rules/ai.list`](rules/ai.list) (Surge syntax, `DOMAIN` / `DOMAIN-SUFFIX` / `IP-CIDR` only — no `DOMAIN-KEYWORD`). Only add entries from first-party sources and link the source in the PR.
 - Rule order, sets and policies: [`src/definition.js`](src/definition.js) is the single source of truth. Never hand-edit generated output.
 - Run `npm test`. If the output change is intended, run `UPDATE_SNAPSHOTS=1 npm test` and commit the snapshot diff.
 - Local build: `npm run build` (offline; output in `dist/`).
@@ -124,7 +124,7 @@ GPL-3.0. Loyalsoldier data ([surge-rules](https://github.com/Loyalsoldier/surge-
 
 ### 参与贡献
 
-- AI 域名和 IP：编辑 [`rules/ai.list`](rules/ai.list)（Surge 语法）。只收录官方来源的条目，并在 PR 中附上来源链接。
+- AI 域名和 IP：编辑 [`rules/ai.list`](rules/ai.list)（Surge 语法，只用 `DOMAIN` / `DOMAIN-SUFFIX` / `IP-CIDR`，不用 `DOMAIN-KEYWORD`）。只收录官方来源的条目，并在 PR 中附上来源链接。
 - 规则顺序、规则集和策略：[`src/definition.js`](src/definition.js) 是唯一来源。不要手动修改生成的产物。
 - 运行 `npm test`。如果输出变化是预期的，运行 `UPDATE_SNAPSHOTS=1 npm test`，并把快照的变化一起提交。
 - 本地构建：`npm run build`（不需要联网，产物在 `dist/`）。
